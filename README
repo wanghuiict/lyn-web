@@ -1,0 +1,8 @@
+ansible-playbook -i hosts -e lyn_action=precheck site.yml
+ansible-playbook -i hosts -e lyn_action=build site.yml
+ansible-playbook -i hosts -e lyn_action=test site.yml
+
+
+
+ansible-playbook -vv -e WORKDIR=$(pwd) -i hosts site.yml
+

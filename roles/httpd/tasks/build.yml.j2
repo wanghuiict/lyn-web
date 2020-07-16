@@ -1,0 +1,4 @@
+---
+
+- name: build docker image lyn-web
+  command: docker build -f {{ CURRENTDIR }}/../Dockerfile -t lyn-web:v1 {{ CURRENTDIR }}/..

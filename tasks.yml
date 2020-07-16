@@ -1,0 +1,62 @@
+- name: prepare prototype system nodes - yancheng city
+  hosts: deploy control compute
+  #hosts: c7-2
+  user: root
+  gather_facts: false
+  tasks:
+  - name: test
+    ping: 
+  - name: Install a list of packages
+    yum:
+      name:
+        - docker-ce
+        - python-pip
+        - ntp
+        - yum-priorities
+      state: present
+    notify:
+    - restart docker
+
+  - name: Enable service docker
+    service:
+      name: docker
+      enabled: yes
+    notify:
+    - restart docker
+
+  - name: Give insecure permissions to an existing file
+    file:
+      path: /home/docker
+      owner: root
+      group: root
+      state: directory
+      mode: '0711'
+
+  - name: Mount and bind /home/docker
+    mount:
+      path: /var/lib/docker
+      src: /home/docker
+      opts: rw,bind
+      state: mounted
+      fstype: none
+    notify:
+    - restart docker
+
+  - name: disable service NetworkManager
+    service:
+      name: NetworkManager
+      enabled: no
+      state: stopped
+
+  - name: disable service firewalld
+    service:
+      name: firewalld
+      enabled: no
+      state: stopped
+
+  - name: Disable SELinux
+    selinux: state=disabled
+
+  handlers:
+  - name: restart docker
+    service: name=docker state=restarted

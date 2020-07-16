@@ -1,0 +1,4 @@
+---
+
+- name: run docker container
+  command: docker run --rm --network host -h lyn-web --name lyn-web-test -d lyn-web:v1

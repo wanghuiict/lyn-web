@@ -1,0 +1,7 @@
+---
+- name: create Dockefile for httpd
+  command: python createfile_from_j2.py roles/httpd/Dockerfile.j2 vars.yml
+- name: create build.yml for httpd
+  command: python createfile_from_j2.py roles/httpd/tasks/build.yml.j2 vars.yml
+- name: create local.repo for httpd
+  command: python createfile_from_j2.py roles/httpd/local.repo.j2 vars.yml

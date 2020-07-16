@@ -1,0 +1,27 @@
+# lyn-web
+FROM centos:7
+ 
+MAINTAINER wanghuiict wanghuiict@gmail.com
+
+COPY local.repo /etc/yum.repos.d/
+RUN yum install -y php56-2.3-1.el7.remi php-5.6.32-1.el7.remi php56-php-mysqlnd php-process php-pecl-pthreads httpd
+
+#RUN curl http://mirrors.163.com/.help/CentOS7-Base-163.repo -o /etc/yum.repos.d/CentOS-Base.repo && \
+#    yum install -y http://rpms.famillecollet.com/enterprise/remi-release-7.rpm https://mirrors.aliyun.com/epel/epel-release-latest-7.noarch.rpm && \
+#    yum install -y --enablerepo=remi --enablerepo=remi-php56 php56 php56-php-mysqlnd php-pecl-pthreads httpd && \
+#    curl -sSL https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64 -o /usr/local/bin/dumb-init
+#RUN yum install -y --enablerepo=remi --enablerepo=remi-php56 php-process php-pecl-pthreads
+
+COPY start.sh dumb-init /usr/local/bin/
+
+RUN chmod +x /usr/local/bin/dumb-init && \
+    chmod 755 /usr/local/bin/start.sh
+
+# disable MPM prefork module
+RUN sed -i -e 's/^LoadModule/#LoadModule/' -e '/mod_mpm_worker.so/ s/^#LoadModule/LoadModule/' /etc/httpd/conf.modules.d/00-mpm.conf \
+    && echo -e "<?php\nphpinfo();\n?>" > /var/www/html/phpinfo.php
+
+ENTRYPOINT ["dumb-init", "--"]
+
+CMD ["start.sh"]
+
