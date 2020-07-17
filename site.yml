@@ -1,9 +1,30 @@
 ---
 
-- hosts: localhost
+- name:  httpd {{ lyn_action }} on localhost
+  gather_facts: false
+  hosts: 
+      - deployment
+  vars:
+      action1: '{{ lyn_action }}'
   remote_user: root
   become: yes
   become_method: sudo
   connection: local
   roles:
-    - httpd 
+       - { role: httpd,
+           when: lyn_action == 'precheck' or
+                 lyn_action == 'build' or
+                 lyn_action == 'test'
+         }
+
+- name: deploy httpd {{ lyn_action }}
+  gather_facts: false
+  hosts: 
+      - httpd
+  remote_user: root
+  become: yes
+  become_method: sudo
+  roles:
+          - { role: httpd, 
+              when: lyn_action == 'deploy'
+            }

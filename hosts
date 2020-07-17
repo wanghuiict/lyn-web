@@ -1,2 +1,5 @@
+[deployment]
+localhost
+
 [httpd]
 localhost
